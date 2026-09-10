@@ -2,13 +2,17 @@ name: Game CI
 
 on:
   push:
-    branches: [main, game-v2]
+    branches: [main, game-v2, game-v3]
   pull_request:
-    branches: [main, game-v2]
+    branches: [main, game-v2, game-v3]
+
+permissions:
+  contents: read
 
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,10 +21,10 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm install
+        run: npm install --ignore-scripts --no-audit --no-fund
       - name: Syntax check
-        run: node --check js/main.js
+        run: npm run syntax
       - name: Lint
         run: npm run lint
-      - name: Game math tests
+      - name: Game tests and UI smoke test
         run: npm test

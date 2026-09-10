@@ -1,12 +1,14 @@
 {
   "name": "nebula-survivors",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Dependency-free static browser arena survival game",
+  "description": "Original dependency-light browser arena survival game",
   "scripts": {
+    "syntax": "node --check js/main.js && node --check js/game-test.js && node --check js/smoke-test.js",
     "lint": "eslint js",
-    "test": "node js/game-test.js"
+    "test": "node js/game-test.js && node js/smoke-test.js",
+    "check": "npm run syntax && npm run lint && npm test"
   },
   "devDependencies": {
     "eslint": "^9.35.0"

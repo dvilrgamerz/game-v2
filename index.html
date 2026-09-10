@@ -3,22 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#07111f">
-  <meta name="description" content="Nebula Survivors — an original browser arena survival game.">
+  <meta name="theme-color" content="#06101d">
+  <meta name="description" content="Nebula Survivors — an original neon arena survival game.">
   <meta name="color-scheme" content="dark">
   <title>Nebula Survivors</title>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <main id="app" class="app">
-    <canvas id="game" aria-label="Nebula Survivors game canvas"></canvas>
-    <section id="hud" class="hud hidden" aria-live="polite"><div class="hud-top"><div class="stat-pill"><span>LEVEL</span><strong id="level">1</strong></div><div class="stat-pill"><span>WAVE</span><strong id="wave">1</strong></div><div class="stat-pill"><span>TIME</span><strong id="time">00:00</strong></div><div class="stat-pill"><span>KILLS</span><strong id="kills">0</strong></div><button id="pauseBtn" class="icon-btn" type="button" aria-label="Pause game">Ⅱ</button></div><div class="bars"><div class="bar-wrap"><span>HP</span><div class="bar hp"><i id="hpBar"></i></div></div><div class="bar-wrap"><span>XP</span><div class="bar xp"><i id="xpBar"></i></div></div></div><div id="bossBar" class="boss-bar hidden"><div class="boss-label"><span>BOSS</span><strong id="bossName">WARDEN</strong></div><div class="bar boss"><i id="bossHpBar"></i></div></div></section>
-    <section id="menu" class="screen-card visible" aria-label="Main menu"><div class="brand-mark" aria-hidden="true">✦</div><p class="eyebrow">ORIGINAL ARENA SURVIVAL</p><h1>NEBULA <span>SURVIVORS</span></h1><p class="subtitle">Build a ridiculous arsenal, survive escalating swarms, and evolve your loadout every run.</p><button id="startBtn" class="primary-btn" type="button">START RUN</button><div class="feature-row"><span>⚡ Auto-combat</span><span>◆ 10 upgrades</span><span>☄ Elite + boss waves</span><span>📱 Touch ready</span></div><p class="hint">WASD / Arrow Keys to move • P to pause • Collect shards to level up</p></section>
-    <section id="upgrade" class="screen-card hidden" aria-label="Upgrade selection"><p class="eyebrow">LEVEL UP</p><h2>Choose your upgrade</h2><div id="upgradeGrid" class="upgrade-grid"></div></section>
-    <section id="pause" class="screen-card hidden" aria-label="Paused game"><p class="eyebrow">RUN PAUSED</p><h2>Take a breath.</h2><button id="resumeBtn" class="primary-btn" type="button">RESUME</button><button id="quitBtn" class="secondary-btn" type="button">QUIT RUN</button></section>
-    <section id="gameover" class="screen-card hidden" aria-label="Run complete"><div class="result-icon" aria-hidden="true">☄</div><p class="eyebrow">RUN COMPLETE</p><h2 id="gameoverTitle">The swarm wins.</h2><div class="results-grid"><div><span>TIME</span><strong id="finalTime">00:00</strong></div><div><span>LEVEL</span><strong id="finalLevel">1</strong></div><div><span>KILLS</span><strong id="finalKills">0</strong></div><div><span>SHARDS</span><strong id="finalShards">0</strong></div></div><p class="record">BEST TIME <strong id="bestTime">00:00</strong> • BEST LEVEL <strong id="bestLevel">1</strong></p><button id="restartBtn" class="primary-btn" type="button">PLAY AGAIN</button><button id="menuBtn" class="secondary-btn" type="button">MAIN MENU</button></section>
-    <div id="touchControls" class="touch-controls hidden" aria-hidden="true"><div id="joystick" class="joystick" aria-label="Movement joystick"><div id="stick" class="stick"></div></div></div><div id="toast" class="toast hidden" role="status" aria-live="polite"></div><div id="runtimeError" class="screen-card hidden" role="alert"><p class="eyebrow">GAME ERROR</p><h2>The game hit an error.</h2><p id="runtimeErrorText" class="subtitle"></p><button id="reloadBtn" class="secondary-btn" type="button">RELOAD</button></div>
-  </main>
-  <script src="js/main.js" defer></script>
+<main id="app" class="app">
+  <canvas id="game" aria-label="Nebula Survivors arena"></canvas>
+
+  <section id="hud" class="hud hidden" aria-live="polite">
+    <div class="hud-top">
+      <div class="stat-pill"><span>LEVEL</span><strong id="level">1</strong></div>
+      <div class="stat-pill"><span>WAVE</span><strong id="wave">1</strong></div>
+      <div class="stat-pill"><span>TIME</span><strong id="time">00:00</strong></div>
+      <div class="stat-pill"><span>SCORE</span><strong id="score">0</strong></div>
+      <div class="stat-pill"><span>KILLS</span><strong id="kills">0</strong></div>
+      <button id="pauseBtn" class="icon-btn" type="button" aria-label="Pause game">Ⅱ</button>
+    </div>
+    <div class="bars">
+      <div class="bar-wrap"><span>HP</span><div class="bar hp"><i id="hpBar"></i></div></div>
+      <div class="bar-wrap"><span>XP</span><div class="bar xp"><i id="xpBar"></i></div></div>
+    </div>
+    <div id="loadout" class="loadout" aria-label="Current loadout"></div>
+    <div id="bossBar" class="boss-bar hidden">
+      <div class="boss-label"><span>⚠ BOSS</span><strong id="bossName">VOID WARDEN</strong></div>
+      <div class="bar boss"><i id="bossHpBar"></i></div>
+    </div>
+  </section>
+
+  <section id="menu" class="screen-card" aria-label="Main menu">
+    <div class="brand-mark" aria-hidden="true">✦</div>
+    <p class="eyebrow">ORIGINAL ARENA SURVIVAL</p>
+    <h1>NEBULA <span>SURVIVORS</span></h1>
+    <p class="subtitle">Survive endless swarms, evolve three weapon systems, defeat bosses, and chase your best score.</p>
+    <div class="menu-actions">
+      <button id="startBtn" class="primary-btn" type="button">START RUN</button>
+      <button id="settingsBtn" class="secondary-btn" type="button">SETTINGS</button>
+      <button id="scoresBtn" class="secondary-btn" type="button">HIGH SCORES</button>
+    </div>
+    <div class="feature-row">
+      <span>⚡ Auto-combat</span><span>◆ Evolutions</span><span>☄ Boss waves</span><span>🎮 Gamepad</span><span>📱 Touch</span>
+    </div>
+    <p class="hint">WASD / Arrow Keys / Joystick / Gamepad • P or Esc to pause • Collect shards to level up</p>
+  </section>
+
+  <section id="settings" class="screen-card hidden" aria-label="Settings">
+    <p class="eyebrow">OPTIONS</p>
+    <h2>Settings</h2>
+    <div class="settings-grid">
+      <label>Graphics
+        <select id="graphics"><option>Low</option><option>Medium</option><option selected>High</option><option>Ultra</option></select>
+      </label>
+      <label>Particles
+        <select id="particles"><option value="0.5">Low</option><option value="1" selected>Normal</option><option value="1.5">High</option></select>
+      </label>
+      <label>UI Scale
+        <input id="uiScale" type="range" min="90" max="130" value="100">
+        <span><output id="uiScaleValue">100</output>%</span>
+      </label>
+      <label>Master Volume
+        <input id="volume" type="range" min="0" max="1" step="0.05" value="0.55">
+        <span><output id="volumeValue">55</output>%</span>
+      </label>
+      <label>Color Mode
+        <select id="colorMode"><option value="normal" selected>Normal</option><option value="contrast">High Contrast</option></select>
+      </label>
+      <label class="check"><input id="shake" type="checkbox" checked> Screen shake</label>
+      <label class="check"><input id="numbers" type="checkbox" checked> Damage numbers</label>
+      <label class="check"><input id="grid" type="checkbox" checked> Arena grid</label>
+      <label class="check"><input id="glow" type="checkbox" checked> Neon glow</label>
+      <label class="check"><input id="reduced" type="checkbox"> Reduced motion</label>
+    </div>
+
+    <div class="skin-box">
+      <div id="skinPreview" class="skin-preview">CYAN</div>
+      <div>
+        <h3>Player Skin</h3>
+        <p class="hint">Choose a built-in theme or upload PNG/JPEG. Custom images stay only in this browser session.</p>
+      </div>
+      <div class="skin-choices">
+        <button class="skin-choice active" data-skin="cyan" type="button">CYAN</button>
+        <button class="skin-choice" data-skin="violet" type="button">VIOLET</button>
+        <button class="skin-choice" data-skin="gold" type="button">GOLD</button>
+        <button class="skin-choice" data-skin="emerald" type="button">EMERALD</button>
+      </div>
+      <label class="upload"><span>Upload skin</span><input id="skinFile" type="file" accept="image/png,image/jpeg"></label>
+      <button id="clearSkin" class="secondary-btn" type="button">RESET SKIN</button>
+      <p id="skinStatus" class="hint"></p>
+    </div>
+
+    <div class="settings-actions">
+      <button id="saveSettings" class="primary-btn" type="button">SAVE SETTINGS</button>
+      <button id="settingsBackBtn" class="secondary-btn" type="button">BACK</button>
+    </div>
+  </section>
+
+  <section id="scores" class="screen-card hidden" aria-label="High scores">
+    <p class="eyebrow">LOCAL RECORDS</p>
+    <h2>High Scores</h2>
+    <div id="scoreList" class="score-list"></div>
+    <p class="hint">Top 10 runs are saved locally in this browser.</p>
+    <button id="scoresBack" class="secondary-btn" type="button">BACK</button>
+  </section>
+
+  <section id="upgrade" class="screen-card hidden" aria-label="Upgrade selection">
+    <p class="eyebrow">LEVEL UP</p>
+    <h2>Choose your upgrade</h2>
+    <p id="upgradeSub" class="hint"></p>
+    <div id="upgradeGrid" class="upgrade-grid"></div>
+  </section>
+
+  <section id="pause" class="screen-card hidden" aria-label="Paused game">
+    <p class="eyebrow">RUN PAUSED</p>
+    <h2>Paused</h2>
+    <button id="resumeBtn" class="primary-btn" type="button">RESUME</button>
+    <button id="pauseSettingsBtn" class="secondary-btn" type="button">SETTINGS</button>
+    <button id="quitBtn" class="secondary-btn" type="button">QUIT RUN</button>
+  </section>
+
+  <section id="gameover" class="screen-card hidden" aria-label="Run complete">
+    <div class="result-icon" aria-hidden="true">☄</div>
+    <p class="eyebrow">RUN COMPLETE</p>
+    <h2>The swarm wins.</h2>
+    <div class="results-grid">
+      <div><span>TIME</span><strong id="finalTime">00:00</strong></div>
+      <div><span>LEVEL</span><strong id="finalLevel">1</strong></div>
+      <div><span>SCORE</span><strong id="finalScore">0</strong></div>
+      <div><span>KILLS</span><strong id="finalKills">0</strong></div>
+    </div>
+    <p class="record">BEST SCORE <strong id="bestScore">0</strong> • BEST TIME <strong id="bestTime">00:00</strong></p>
+    <button id="restartBtn" class="primary-btn" type="button">PLAY AGAIN</button>
+    <button id="menuBtn" class="secondary-btn" type="button">MAIN MENU</button>
+  </section>
+
+  <div id="touchControls" class="touch-controls hidden" aria-hidden="true">
+    <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="stick" class="stick"></div></div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <section id="runtimeError" class="screen-card hidden" role="alert">
+    <p class="eyebrow">GAME ERROR</p>
+    <h2>The game hit an error.</h2>
+    <p id="runtimeErrorText" class="subtitle"></p>
+    <button id="reloadBtn" class="secondary-btn" type="button">RELOAD</button>
+  </section>
+</main>
+<script src="js/main.js" defer></script>
 </body>
 </html>
